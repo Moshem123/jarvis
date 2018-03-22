@@ -1,0 +1,15 @@
+dist
+
+node_modules/
+
+**/*.log*
+**/*.pid
+**/*.swp
+
+.DS_Store
+Thumbs.db
+.idea
+package-lock.json
+
+src/config/
+projectFilesBackup/

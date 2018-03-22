@@ -1,0 +1,14 @@
+**/dist
+**/node_modules
+
+**/*.log*
+**/*.pid
+**/*.swp
+
+.DS_Store
+Thumbs.db
+**/.idea
+package-lock.json
+
+backend/projectFilesBackup/
+backend/src/config/

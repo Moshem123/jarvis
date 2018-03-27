@@ -239,7 +239,7 @@ function filterEC2Types(authTypes, instances) {
         returnArr = instances.filter((instance) => {
             let clientIndex = instance.Instances[0].Tags.findIndex(e => e.Key === "Client");
             if (typeof instance.Instances[0].Tags[clientIndex] === 'undefined') return true;
-            return req.authTypes.indexOf(instance.Instances[0].Tags[clientIndex].Value) > -1;
+            return authTypes.indexOf(instance.Instances[0].Tags[clientIndex].Value) > -1;
         });
     return returnArr;
 }

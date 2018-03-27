@@ -33,12 +33,10 @@ const Card = styled.div`
     border-top: 1px solid #c3c3c3;
   }
 `;
-
 const SmallCircle = styled.i`
   color: ${props => colors[props.color]};
   ${props => props.color !== 'red' ? `animation: ${blinker} 1.0s cubic-bezier(.5, 0, 1, 1) infinite alternate;` : ''}
 `;
-
 const Grid = styled.div`
   display: flex;
   flex-flow: row wrap;

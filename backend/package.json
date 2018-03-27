@@ -8,7 +8,8 @@
     "lint": "lint src",
     "clean-dist": "rimraf dist/ && mkdir dist",
     "prebuild": "npm-run-all clean-dist lint",
-    "build": "cross-env NODE_ENV=production babel src -d dist"
+    "build": "cross-env NODE_ENV=production babel src -d dist",
+    "serve": "node dist"
   },
   "repository": {
     "type": "git",

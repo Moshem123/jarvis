@@ -4,6 +4,7 @@
   "description": "Tradair script converted to nodejs app",
   "main": "index.js",
   "scripts": {
+    "start": "gulp dev",
     "lint": "lint src",
     "clean-dist": "rimraf dist/ && mkdir dist",
     "prebuild": "npm-run-all clean-dist lint",
@@ -28,6 +29,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.15.4",
     "jsonwebtoken": "^8.0.1",
+    "lint": "^1.1.2",
     "lodash": "^4.17.4",
     "morgan": "^1.8.2",
     "ping": "^0.2.2",

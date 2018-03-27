@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp dev",
-    "lint": "lint src",
+    "lint": "eslint src",
     "clean-dist": "rimraf dist/ && mkdir dist",
     "prebuild": "npm-run-all clean-dist lint",
     "build": "cross-env NODE_ENV=production babel src -d dist",

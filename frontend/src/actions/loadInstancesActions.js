@@ -6,7 +6,7 @@ import { getToken } from "../localStorage";
 function getStatusColor(status) {
   if (['stopped', 'paused'].indexOf(status) !== -1) {
     return 'red';
-  } else if (['fulfilled', 'started', 'running'].indexOf(status) !== -1) {
+  } else if (['fulfilled', 'started', 'running', 'active'].indexOf(status) !== -1) {
     return 'green';
   } else {
     return 'orange';

@@ -1,10 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import {blinker} from "../../../utils/animations";
+import { blinker } from "../../../utils/animations";
 
-const colors = {green: "#56ee56", red: "#ee0005", orange: "#ffb510"};
+const colors = { green: "#56ee56", red: "#ee0005", orange: "#ffb510" };
 
 const Card = styled.div`
   margin: 15px;
@@ -41,32 +41,105 @@ const Grid = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
-  margin: 1rem;
+`;
+const Container = styled.div`
+  margin: 30px;
+  display: flex;
+  justify-content: center
+`;
+const Th = styled.th`
 
 `;
 
-const InstancesList = ({instances, match}) => {
-    const instanceObj = (data) => (
-        <Link to={`${match.path}/instances/${data.id}`} key={data.id} style={{textDecoration: 'none'}}>
-            <Card color={data.statusColor}>
-                <div className="header">
-                    {data.name}
-                    <div className="sub-header">{data.ip}</div>
-                </div>
-                <div className="status">
-                    <SmallCircle
-                        color={data.statusColor}
-                        className={`fa fa-circle`}>&nbsp;</SmallCircle>
-                    {data.status}
-                </div>
-            </Card>
+const InstancesList = ({ instances, match, listType }) => {
+  const instanceObj = data => (
+    <Link to={`${match.path}/instances/${data.id}`} key={data.id}
+          style={{ textDecoration: 'none' }}>
+      <Card color={data.statusColor}>
+        <div className="header">
+          {data.name}
+          <div className="sub-header">{data.ip}</div>
+        </div>
+        <div className="status">
+          <SmallCircle
+            color={data.statusColor}
+            className={`fa fa-circle`}>&nbsp;</SmallCircle>
+          {data.status}
+        </div>
+      </Card>
+    </Link>
+  );
+  const instanceRow = data => (
+    <tr key={data.id}>
+      <td>
+        <SmallCircle
+          color={data.statusColor}
+          className={`fa fa-circle`}>&nbsp;</SmallCircle>
+        <Link to={`${match.path}/instances/${data.id}`}>
+          {data.name}
         </Link>
-    );
-    return (
-        <Grid>
-            {instances.map(data => instanceObj(data))}
-        </Grid>
-    );
+      </td>
+      <td>{data.ip}</td>
+      <td>{data.type}</td>
+      <td style={{ color: colors[data.statusColor] }}>{data.status}</td>
+      <td>{data.id}</td>
+      <td>{data.amazonType}</td>
+      <td>{data.client}</td>
+      <td>{data.zone}</td>
+    </tr>
+  );
+
+  const views = {
+    'boxes': <Grid>
+      {instances.map(data => instanceObj(data))}
+    </Grid>,
+    'table': (
+      <Container>
+        <table style={{ flex: 1 }}>
+          <thead>
+          <tr>
+            <Th id='name'>
+              <i className="fa fa-rocket" aria-hidden="true"/>
+              {" "}Name
+            </Th>
+            <Th id='ip'>
+              <i className="fa fa-terminal" aria-hidden="true"/>
+              {" "}IP
+            </Th>
+            <Th id='type'>
+              <i className="fa fa-flag-checkered" aria-hidden="true"/>
+              {" "}Type
+            </Th>
+            <Th id='status'>
+              <i className="fa fa-heartbeat" aria-hidden="true"/>
+              {" "}Status
+            </Th>
+            <Th id='id'>
+              <i className="fa fa-hashtag" aria-hidden="true"/>
+              {" "}ID
+            </Th>
+            <Th id='amazonType'>
+              <i className="fa fa-server" aria-hidden="true"/>
+              {" "}Instance Type
+            </Th>
+            <Th id='client'>
+              <i className="fa fa-user" aria-hidden="true"/>
+              {" "}Client
+            </Th>
+            <Th id='zone'>
+              <i className="fa fa-globe" aria-hidden="true"/>
+              {" "}Region
+            </Th>
+          </tr>
+          </thead>
+          <tbody>
+          {instances.map(data => instanceRow(data))}
+          </tbody>
+        </table>
+      </Container>
+    )
+  };
+  return views[listType];
 };
 
 export default InstancesList;

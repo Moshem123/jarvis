@@ -22,8 +22,6 @@ export default function logsReducer(state = initialState.logs, action) {
       };
     }
     case types.REMOVE_REQ_LOG: {
-      console.log(state);
-      console.log(action);
       const newLogs = state[action.srv].logs.slice();
       newLogs.splice(newLogs.indexOf(action.log),1);
       return {

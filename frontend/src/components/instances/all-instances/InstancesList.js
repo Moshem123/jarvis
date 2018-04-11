@@ -163,13 +163,15 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
         <table style={{ flex: 1 }}>
           <thead>
           <tr>
-            {headers.map(head => (<Th key={head.id} id={head.lName} onClick={sortFunc}>
-              <div>
-                <i className={`fa fa-${head.faIcon}`} aria-hidden="true"/>
-                <div className="name">{head.uName}</div>
-                {alreadySorted.field === head.lName && (alreadySorted.dir === 'asc' ? <SortUp /> : <SortDown />)}
-              </div>
-            </Th>))}
+            {headers.map(header => (
+              <Th key={header.lName} id={header.lName} onClick={sortFunc}>
+                <div>
+                  <i className={`fa fa-${header.faIcon}`} aria-hidden="true"/>
+                  <div className="name">{header.uName}</div>
+                  {alreadySorted.field === header.lName && (alreadySorted.dir === 'asc' ? <SortUp/> : <SortDown/>)}
+                </div>
+              </Th>
+            ))}
           </tr>
           </thead>
           <tbody>

@@ -48,10 +48,41 @@ const Container = styled.div`
   justify-content: center
 `;
 const Th = styled.th`
-
+  cursor: pointer;
+  div{
+    display: flex;
+    align-items: center;
+    &>div{
+      margin-left: 5px;
+      flex: 1;
+    }
+  }
+`;
+const SortUp = styled.i`
+  left: 3px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border: solid 5px transparent;
+  margin: 4px 4px 0 3px;
+  background: transparent;
+  border-bottom: solid 7px #000;
+  border-top-width: 0;
+`;
+const SortDown = styled.i` 
+  left: 3px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border: solid 5px transparent;
+  margin: 4px 4px 0 3px;
+  background: transparent;
+  border-top: solid 7px #000;
+  border-bottom-width: 0;
 `;
 
-const InstancesList = ({ instances, match, listType }) => {
+
+const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) => {
   const instanceObj = data => (
     <Link to={`${match.path}/instances/${data.id}`} key={data.id}
           style={{ textDecoration: 'none' }}>
@@ -88,7 +119,41 @@ const InstancesList = ({ instances, match, listType }) => {
       <td>{data.zone}</td>
     </tr>
   );
-
+  const headers = [
+    {
+      lName: 'name',
+      uName: 'Name',
+      faIcon: 'rocket'
+    }, {
+      lName: 'ip',
+      uName: 'IP',
+      faIcon: 'terminal'
+    }, {
+      lName: 'type',
+      uName: 'Type',
+      faIcon: 'flag'
+    }, {
+      lName: 'status',
+      uName: 'Status',
+      faIcon: 'heartbeat'
+    }, {
+      lName: 'id',
+      uName: 'ID',
+      faIcon: 'hashtag'
+    }, {
+      lName: 'amazonType',
+      uName: 'Instance Type',
+      faIcon: 'server'
+    }, {
+      lName: 'client',
+      uName: 'Client',
+      faIcon: 'user'
+    }, {
+      lName: 'zone',
+      uName: 'Region',
+      faIcon: 'globe'
+    }
+  ];
   const views = {
     'boxes': <Grid>
       {instances.map(data => instanceObj(data))}
@@ -98,38 +163,13 @@ const InstancesList = ({ instances, match, listType }) => {
         <table style={{ flex: 1 }}>
           <thead>
           <tr>
-            <Th id='name'>
-              <i className="fa fa-rocket" aria-hidden="true"/>
-              {" "}Name
-            </Th>
-            <Th id='ip'>
-              <i className="fa fa-terminal" aria-hidden="true"/>
-              {" "}IP
-            </Th>
-            <Th id='type'>
-              <i className="fa fa-flag-checkered" aria-hidden="true"/>
-              {" "}Type
-            </Th>
-            <Th id='status'>
-              <i className="fa fa-heartbeat" aria-hidden="true"/>
-              {" "}Status
-            </Th>
-            <Th id='id'>
-              <i className="fa fa-hashtag" aria-hidden="true"/>
-              {" "}ID
-            </Th>
-            <Th id='amazonType'>
-              <i className="fa fa-server" aria-hidden="true"/>
-              {" "}Instance Type
-            </Th>
-            <Th id='client'>
-              <i className="fa fa-user" aria-hidden="true"/>
-              {" "}Client
-            </Th>
-            <Th id='zone'>
-              <i className="fa fa-globe" aria-hidden="true"/>
-              {" "}Region
-            </Th>
+            {headers.map(head => (<Th key={head.id} id={head.lName} onClick={sortFunc}>
+              <div>
+                <i className={`fa fa-${head.faIcon}`} aria-hidden="true"/>
+                <div className="name">{head.uName}</div>
+                {alreadySorted.field === head.lName && (alreadySorted.dir === 'asc' ? <SortUp /> : <SortDown />)}
+              </div>
+            </Th>))}
           </tr>
           </thead>
           <tbody>

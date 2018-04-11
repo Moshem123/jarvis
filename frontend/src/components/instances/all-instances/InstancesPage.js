@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-// import pick from 'lodash/pick';
+import orderBy from 'lodash/orderBy';
 
 // import * as actions from '../../../actions/loadInstancesActions';
 import { saveSelectedInstances } from '../../../actions/selectboxInstancesActions';
@@ -11,6 +11,7 @@ import SearchBar from './SearchBar';
 import Pagination from '../../common/Pagination';
 import DisplayOptions from "./DisplayOptions";
 import { changeListType, changeShowingItems } from "../../../actions/viewTypeActions";
+import GoUp from "../../common/GoUp";
 
 const CenteredPag = styled.div`
     display: flex;
@@ -25,6 +26,7 @@ class InstancesPage extends PureComponent {
     pageOfItems: [],
     tags: this.props.tags || [],
     currentTagValue: this.props.instances.selectedInstances || {},
+    alreadySorted: { field: 'name', dir: 'asc' }
   };
 
   componentDidMount() {
@@ -89,11 +91,23 @@ class InstancesPage extends PureComponent {
     this.props.changeListType(target.value);
   };
 
+  sortCol = event => {
+    const col = event.currentTarget.id;
+    const { alreadySorted, showingItems } = this.state;
+    let newDir = 'asc';
+    if (alreadySorted.field === col) {
+      newDir = alreadySorted.dir === 'asc' ? 'desc' : 'asc';
+    }
+    const orderedItems = orderBy(showingItems, col, newDir);
+    this.setState({ alreadySorted: { field: col, dir: newDir }, showingItems: orderedItems })
+  };
+
   render() {
-    const { currentTagValue, tags, pageOfItems, availableNumberOfDisplayedItems, showingItems } = this.state;
+    const { currentTagValue, tags, pageOfItems, availableNumberOfDisplayedItems, showingItems, alreadySorted } = this.state;
     const { listType, numberOfDisplayedItems } = this.props;
     return (
       <div>
+        <GoUp/>
         <SearchBar
           tags={tags}
           handleTagChange={this.handleTagChange}
@@ -107,7 +121,9 @@ class InstancesPage extends PureComponent {
         <InstancesList
           instances={pageOfItems}
           match={this.props.match}
-          listType={listType}/>
+          listType={listType}
+          sortFunc={this.sortCol}
+          alreadySorted={alreadySorted}/>
         <CenteredPag>
           <Pagination
             maxItems={numberOfDisplayedItems}

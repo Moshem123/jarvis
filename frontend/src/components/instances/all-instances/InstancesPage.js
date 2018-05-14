@@ -26,7 +26,7 @@ class InstancesPage extends PureComponent {
     pageOfItems: [],
     tags: this.props.tags || [],
     currentTagValue: this.props.instances.selectedInstances || {},
-    alreadySorted: { field: 'name', dir: 'asc' }
+    alreadySorted: { field: '', dir: '' }
   };
 
   componentDidMount() {
@@ -95,9 +95,7 @@ class InstancesPage extends PureComponent {
     const col = event.currentTarget.id;
     const { alreadySorted, showingItems } = this.state;
     let newDir = 'asc';
-    if (alreadySorted.field === col) {
-      newDir = alreadySorted.dir === 'asc' ? 'desc' : 'asc';
-    }
+    alreadySorted.field === col && alreadySorted.dir === "asc" && (newDir = "desc");
     const orderedItems = orderBy(showingItems, col, newDir);
     this.setState({ alreadySorted: { field: col, dir: newDir }, showingItems: orderedItems })
   };

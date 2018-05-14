@@ -7,9 +7,7 @@ export function toggleInstance(instance, status) {
     return function (dispatch) {
         return getToken().then(authConfig => {
             dispatch(beginAjaxCall());
-            const isEC2 = instance.lifeCycle === 'ec2';
-            const idName = isEC2 ? 'instanceid' : 'groupid';
-            const requestBody = {status, [idName]: instance.id, region: instance.zone.slice(0, -1)};
+            const requestBody = {status, id: instance.id, region: instance.zone.slice(0, -1)};
 
             return axios.post(`/api/instances/${instance.lifeCycle}`, requestBody, authConfig)
                 .then(e => {

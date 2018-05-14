@@ -38,6 +38,5 @@ render(
       <App/>
     </Router>
   </Provider>
-  ,
-  document.querySelector('#app')
+  , document.querySelector('#app')
 );

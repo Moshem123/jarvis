@@ -71,24 +71,13 @@ function filterSpotTypes(authTypes, instances) {
     returnArr = instances;
   else
     returnArr = instances.filter(instance => { // Filter only authorized instances
-      let clientIndex = instance.compute.launchSpecification.tags.findIndex(e => e.tagKey === "Client");
-      if (typeof instance.compute.launchSpecification.tags[clientIndex] === 'undefined') return true; // return
-      // even if
-      // it
-      // doesn't
-      // have
-      // client
-      // tag
-      return authTypes.indexOf(instance.compute.launchSpecification.tags[clientIndex].tagValue) > -1; // return
-      // instances
-      // that
-      // their
-      // client
-      // tag is
-      // in the
-      // authorized
-      // types
-      // array
+      if (instance.compute.launchSpecification.hasOwnProperty('tags')) {
+        let clientIndex = instance.compute.launchSpecification.tags.findIndex(e => e.tagKey === "Client");
+        if (typeof instance.compute.launchSpecification.tags[clientIndex] === 'undefined') return true; // return even if it doesn't have client tag
+        return authTypes.indexOf(instance.compute.launchSpecification.tags[clientIndex].tagValue) > -1; // return instances that their client tag is in the authorized types array
+      } else {
+        return true;
+      }
     });
   return returnArr; // Send the instances the user is authorized to see
 }

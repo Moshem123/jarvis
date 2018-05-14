@@ -42,7 +42,7 @@ class InstancesPage extends PureComponent {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  static getDerivedStateFromProps(nextProps) {
     let newState = {};
     let callTagChange;
     const { instances } = this.props;

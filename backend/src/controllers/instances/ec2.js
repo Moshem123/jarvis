@@ -172,9 +172,9 @@ function toggleFleet(id, statusCode) {
       console.log(data);
       // If we want to stop, we need to send shutdown command to the server via ssh
       if (statusCode === 0) {
-        if (!fleetCache.body){
-
-        }
+        // if (!fleetCache.body){
+        //
+        // }
         const instanceObj = fleetCache.body.find(instance => instance.SpotFleetRequestId === id);
         const serverIp = instanceObj.instances[0].Instances[0].PrivateIpAddress;
         const command = `ssh root@${serverIp} "halt -p"`;

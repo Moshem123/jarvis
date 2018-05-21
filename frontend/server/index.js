@@ -7,7 +7,7 @@ const morgan = require('morgan');
 
 const app = express();
 
-const outputPath = resolve(__dirname, 'dist');
+const outputPath = resolve('..', __dirname, 'dist');
 const port = process.env.PORT || '3000';
 const divider = chalk.gray('\n-----------------------------------');
 

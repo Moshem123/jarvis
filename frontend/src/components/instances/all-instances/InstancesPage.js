@@ -42,7 +42,7 @@ class InstancesPage extends PureComponent {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     let newState = {};
     let callTagChange;
     const { instances } = this.props;

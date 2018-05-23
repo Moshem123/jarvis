@@ -95,9 +95,15 @@ function filterEC2Types(authTypes, instances) {
     returnArr = instances;
   else
     returnArr = instances.filter((instance) => {
-      let clientIndex = instance.Instances[0].Tags.findIndex(e => e.Key === "Client");
-      if (typeof instance.Instances[0].Tags[clientIndex] === 'undefined') return true;
-      return authTypes.indexOf(instance.Instances[0].Tags[clientIndex].Value) > -1;
+      const tags = instance.Instances[0].Tags
+      const clientIndex = tags.findIndex(e => e.Key === "Client");
+      const typeIndex = tags.findIndex(e => e.Key === "Type");
+      if (typeof tags[clientIndex] === 'undefined' && typeof tags[typeIndex] === 'undefined'){
+        return true;
+      }
+      return (authTypes.indexOf((tags[clientIndex] || {}).Value) > -1) ||
+        (authTypes.indexOf((tags[typeIndex] || {}).Value) > -1)
+
     });
   return returnArr;
 }

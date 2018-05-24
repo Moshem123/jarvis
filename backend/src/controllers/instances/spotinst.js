@@ -174,7 +174,7 @@ export const toggleSpotInst = (req, res) => {
     .then(instance => {
       toggleSpot(id, status, instance.id)
         .then(status => {
-            logger.info(`User ${req.data.fName} ${req.data.lName} just ${status}ed spot instance group: ${req.body.groupid}`);
+            logger.info(`User ${req.data.fName} ${req.data.lName} just ${status}ed spot instance group: ${id}`);
             return res.send({ status: 'ok', message: `Server successfully ${status}ed` });
           },
           err => res.status(400).send({ status: 'notok', message: `Server wasn't ${err[0]}ed: ${err[1]}` }))

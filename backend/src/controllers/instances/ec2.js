@@ -72,11 +72,7 @@ function toggleEC2(instanceId, statusCode, region, authTypes) {
     ec2[region].describeTags({ Filters: [{ Name: 'resource-id', Values: [instanceId] }] }, (err, data) => {
       if (err) return reject([status, err]); // an error occurred
 
-      let client;
-      if (data) {
-        client = data.Tags.find((e) => e.Key === "Client").Value;
-      }
-      if (authTypes.indexOf('all') > -1 || authTypes.indexOf(client) > -1) {
+      if (authTypes.indexOf('all') > -1 || checkTagsInComparisonToConfig(data.Tags, authTypes)) {
         ec2[region][`${status}Instances`](obj, (err) => {
           if (err) return reject([status, err]); // an error occurred
 
@@ -91,21 +87,26 @@ function toggleEC2(instanceId, statusCode, region, authTypes) {
 
 function filterEC2Types(authTypes, instances) {
   let returnArr = [];
-  if (authTypes.indexOf('all') > -1)
+  if (authTypes.indexOf('all') > -1) {
     returnArr = instances;
-  else
+  }
+  else {
     returnArr = instances.filter((instance) => {
-      const tags = instance.Instances[0].Tags
-      const clientIndex = tags.findIndex(e => e.Key === "Client");
-      const typeIndex = tags.findIndex(e => e.Key === "Type");
-      if (typeof tags[clientIndex] === 'undefined' && typeof tags[typeIndex] === 'undefined'){
-        return true;
-      }
-      return (authTypes.indexOf((tags[clientIndex] || {}).Value) > -1) ||
-        (authTypes.indexOf((tags[typeIndex] || {}).Value) > -1)
-
+      const tags = instance.Instances[0].Tags;
+      return checkTagsInComparisonToConfig(tags, authTypes);
     });
+  }
   return returnArr;
+}
+
+function checkTagsInComparisonToConfig(tags, authTypes) {
+  const clientIndex = tags.findIndex(e => e.Key === "Client");
+  const typeIndex = tags.findIndex(e => e.Key === "Type");
+  if (typeof tags[clientIndex] === 'undefined' && typeof tags[typeIndex] === 'undefined') {
+    return true;
+  }
+  return (authTypes.indexOf((tags[clientIndex] || {}).Value) > -1) ||
+    (authTypes.indexOf((tags[typeIndex] || {}).Value) > -1)
 }
 
 function getFleetRequests(fleetId) {

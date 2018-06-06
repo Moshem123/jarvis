@@ -72,9 +72,7 @@ function filterSpotTypes(authTypes, instances) {
   else
     returnArr = instances.filter(instance => { // Filter only authorized instances
       if (instance.compute.launchSpecification.hasOwnProperty('tags')) {
-        let clientIndex = instance.compute.launchSpecification.tags.findIndex(e => e.tagKey === "Client");
-        if (typeof instance.compute.launchSpecification.tags[clientIndex] === 'undefined') return true; // return even if it doesn't have client tag
-        return authTypes.indexOf(instance.compute.launchSpecification.tags[clientIndex].tagValue) > -1; // return instances that their client tag is in the authorized types array
+        return checkTagsInComparisonToConfig(instance.compute.launchSpecification.tags, authTypes);
       } else {
         return true;
       }
@@ -118,6 +116,16 @@ function toggleSpot(groupId, statusCode, instance) {
       let errorData = c1.join(', ') || c2 || 'Unknown error.';
       return Promise.reject([status, errorData]);
     });
+}
+
+function checkTagsInComparisonToConfig(tags, authTypes) {
+  const clientIndex = tags.findIndex(e => e.tagKey === "Client");
+  const typeIndex = tags.findIndex(e => e.tagKey === "Type");
+  if (typeof tags[clientIndex] === 'undefined' && typeof tags[typeIndex] === 'undefined') {
+    return true;
+  }
+  return (authTypes.indexOf((tags[clientIndex] || {}).tagValue) > -1) ||
+    (authTypes.indexOf((tags[typeIndex] || {}).tagValue) > -1)
 }
 
 // ===================================================

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { blinker } from "../../../utils/animations";
 
 const colors = { green: "#56ee56", red: "#ee0005", orange: "#ffb510" };
-const lifecycleToColor = {ec2: "#249fff", spot: "#ff8800", fleet: "#03cf03"};
+const lifecycleToColor = { ec2: "#249fff", spot: "#ff8800", fleet: "#03cf03" };
 
 const Card = styled.div` 
   margin: 15px;
@@ -108,7 +108,7 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
         <SmallCircle
           color={data.statusColor}
           className={`fa fa-circle`}>&nbsp;</SmallCircle>
-        <Link to={`${match.path}/instances/${data.id}`} style={{color: lifecycleToColor[data.lifeCycle]}}>
+        <Link to={`${match.path}/instances/${data.id}`} style={{ color: lifecycleToColor[data.lifeCycle] }}>
           {data.name}
         </Link>
       </td>
@@ -116,6 +116,7 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
       <td>{data.type}</td>
       <td style={{ color: colors[data.statusColor] }}>{data.status}</td>
       <td>{data.id}</td>
+      <td>{data.lifeCycle}</td>
       <td>{data.amazonType}</td>
       <td>{data.client}</td>
       <td>{data.zone}</td>
@@ -142,6 +143,10 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
       lName: 'id',
       uName: 'ID',
       faIcon: 'hashtag'
+    }, {
+      lName: 'lifeCycle',
+      uName: 'Life Cycle',
+      faIcon: 'amazon'
     }, {
       lName: 'amazonType',
       uName: 'Instance Type',

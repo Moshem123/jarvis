@@ -182,7 +182,7 @@ function toggleFleet(id, statusCode, region, ip) {
                 // if (!fleetCache.body){
                 //
                 // }
-                const command = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${ip} "sudo shutdown -r now"`;
+                const command = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${ip} "sudo shutdown now"`;
                 performExec(command)
                     .then(data => {
                         console.log(data);

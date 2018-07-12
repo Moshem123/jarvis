@@ -95,14 +95,14 @@ io.on('connection', socket => {
 
     socket.on('upgrade-scripts', qry => {
         if (data) {
-            exec(`ssh root@${qry.srv} "cut -d= -f2 ${config.paths.schemaFile}"`, {timeout: 5000}, (error, stdout) => {
+            exec(`ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "cut -d= -f2 ${config.paths.schemaFile}"`, {timeout: 5000}, (error, stdout) => {
                 if (error) {
                     console.error('stderr', error);
                     socket.emit('upgrade-scripts', {message: 'No tnet-schema.info file, cannot determine DB schema.', srv: qry.srv});
                 } else {
                     const schemaName = stdout.toString('utf8').replace(/\n/gm, '').trim();
                     const query = ['mysql', '-uroot', '-pPanda230', '-htnetdb', '-f', schemaName, '<', `${config.paths.upgradeScripts}/${qry.script}`];
-                    console.log(`ssh root@${qry.srv}`, ...query);
+                    console.log(`ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv}`, ...query);
                     const us = spawn('ssh', [`root@${qry.srv}`, ...query]);
                     us.stdout.on('data', data => {
                         console.log(data.toString());

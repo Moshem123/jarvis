@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
 
-// import * as actions from '../../../actions/loadInstancesActions';
 import { saveSelectedInstances } from '../../../actions/selectboxInstancesActions';
 import InstancesList from "./InstancesList";
 import SearchBar from './SearchBar';

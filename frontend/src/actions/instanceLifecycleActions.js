@@ -7,8 +7,10 @@ export function toggleInstance(instance, status) {
     return function (dispatch) {
         return getToken().then(authConfig => {
             dispatch(beginAjaxCall());
-            const requestBody = {status, id: instance.id, region: instance.zone.slice(0, -1)};
-
+            let requestBody = {status, id: instance.id, region: instance.zone.slice(0, -1)};
+            if (instance.lifeCycle === "fleet") {
+              requestBody.ip = instance.ip;
+            }
             return axios.post(`/api/instances/${instance.lifeCycle}`, requestBody, authConfig)
                 .then(e => {
                     dispatch({type: actions.TOGGLE_INSTANCE_SUCCESS});

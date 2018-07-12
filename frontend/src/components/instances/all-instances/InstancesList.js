@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import { blinker } from "../../../utils/animations";
 
 const colors = { green: "#56ee56", red: "#ee0005", orange: "#ffb510" };
+const lifecycleToColor = {ec2: "#249fff", spot: "#ff8800", fleet: "#03cf03"};
 
-const Card = styled.div`
+const Card = styled.div` 
   margin: 15px;
   box-shadow: 0 0 0 1px #d4d4d5, 0 2.5px 0 0 ${props => colors[props.color]}, 0 1px 3px 0 #d4d4d5;
   border-radius: 5px;
@@ -27,6 +28,7 @@ const Card = styled.div`
     font-weight: 600;
     padding: 10px;
     word-wrap: break-word;
+    color: ${props => lifecycleToColor[props.lifecycle]}
   }
   .status {
     padding: 10px;
@@ -86,7 +88,7 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
   const instanceObj = data => (
     <Link to={`${match.path}/instances/${data.id}`} key={data.id}
           style={{ textDecoration: 'none' }}>
-      <Card color={data.statusColor}>
+      <Card color={data.statusColor} lifecycle={data.lifeCycle}>
         <div className="header">
           {data.name}
           <div className="sub-header">{data.ip}</div>

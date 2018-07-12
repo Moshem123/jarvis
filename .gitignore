@@ -12,3 +12,5 @@ package-lock.json
 
 backend/projectFilesBackup/
 backend/src/config/frontend/test
+
+frontend/test

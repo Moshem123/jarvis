@@ -1,3 +1,3 @@
-export const cacheTime = 60000;
+export const cacheTime = 600000;
 export * from './ec2';
 export * from "./spotinst";

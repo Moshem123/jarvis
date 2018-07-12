@@ -84,7 +84,7 @@ export function getDetails(req, res) {
     if (qry.func !== "all" && qry.script !== "tail") {
       logger.info(`User ${req.data.fName} ${req.data.lName} executed ${qry.script} ${qry.func} ${qry.serv} on ${qry.srv}`);
     }
-    execFile('ssh', ['root@' + qry.srv, qry.script, qry.func, qry.serv], { timeout: 5000 }, (error, stdout, stderr) => {
+    execFile('ssh', ['-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no', 'root@' + qry.srv, qry.script, qry.func, qry.serv], { timeout: 5000 }, (error, stdout, stderr) => {
       let stderrObj = {};
       if (error) {
         console.error('stderr', error);
@@ -107,7 +107,7 @@ export function getUpgradeScripts(req, res) {
   let qry = req.qry || (Object.keys(req.query).length === 0 && req.query.constructor === Object)
     ? req.body
     : req.query;
-  const findCommand = `ssh root@${qry.srv} "find ${config.paths.upgradeScripts}/ -type f -name '*sql' | sed 's?${config.paths.upgradeScripts}/??' | sort"`;
+  const findCommand = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "find ${config.paths.upgradeScripts}/ -type f -name '*sql' | sed 's?${config.paths.upgradeScripts}/??' | sort"`;
   performExec(findCommand, { timeout: 5000 })
     .then(resData => res.status(resData.statusCode).send({ status: resData.statusText, message: resData.message }));
   /*exec(findCommand, {timeout: 5000}, (error, stdout, stderr) => {
@@ -124,7 +124,7 @@ export function getLogDir(req, res) {
   let path = qry.path || config.paths.logs;
   /* first show directories under the path, then list files, print in a format of 'year/month/day hour:minute<tab>file size<tab>file name' and sort by the date.
   /* escaping in the printf is necessary!! */
-  const findCommand = `ssh root@${qry.srv} "find ${path} -maxdepth 1 -type d;find ${path} -maxdepth 1 -type f -printf '%TY/%Tm/%Td %TH:%TM\\t%kKB\\t%P\\n' | sort -nr -k1.1,1.4 -k1.4,1.5 -k1.6 -k2.1,2.2 -k2.3,2.4"`;
+  const findCommand = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "find ${path} -maxdepth 1 -type d;find ${path} -maxdepth 1 -type f -printf '%TY/%Tm/%Td %TH:%TM\\t%kKB\\t%P\\n' | sort -nr -k1.1,1.4 -k1.4,1.5 -k1.6 -k2.1,2.2 -k2.3,2.4"`;
   performExec(findCommand, { timeout: 5000 })
     .then(resData => res.status(resData.statusCode).send({ status: resData.statusText, message: resData.message }));
 }
@@ -138,14 +138,14 @@ export function catLog(req, res) {
   const maxLines = 700;
   if (qry.page) { // If a user requested a specific page
     const startPage = (qry.page === 1) ? 1 : qry.page * maxLines; // If page 1, start from 1, else, page * maxlines
-    const sedQuery = `ssh root@${qry.srv} "sed -n '${startPage},${startPage + maxLines}p' ${qry.log}"`;
+    const sedQuery = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "sed -n '${startPage},${startPage + maxLines}p' ${qry.log}"`;
     performExec(sedQuery, { maxBuffer: 1024 * 250000 })
       .then(resData => res.status(resData.statusCode).send({
         status: resData.statusText,
         message: resData.message
       }));
   } else { // If a user first requested the log, with no page specified
-    const countFileLines = `ssh root@${qry.srv} "wc -l ${qry.log}"`;
+    const countFileLines = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "wc -l ${qry.log}"`;
     performExec(countFileLines)
       .then(resData => {
         if (resData.statusCode !== 200) {
@@ -159,7 +159,7 @@ export function catLog(req, res) {
         // 1 page, give only
         // maxlines, else give
         // all lines.
-        const showSpecificLines = `ssh root@${qry.srv} "sed -n '1,${endLine}p' ${qry.log}"`;
+        const showSpecificLines = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "sed -n '1,${endLine}p' ${qry.log}"`;
 
         performExec(showSpecificLines, { maxBuffer: 1024 * 250000 })
           .then(data => res.status(data.statusCode).send({
@@ -178,7 +178,7 @@ export function grepLog(req, res) {
       : req.query
   );
 
-  const grepQuery = `ssh root@${qry.srv} "grep '${qry.searchQuery}' ${qry.log} || echo 'No results found.'"`;
+  const grepQuery = `ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${qry.srv} "grep '${qry.searchQuery}' ${qry.log} || echo 'No results found.'"`;
   performExec(grepQuery, {})
     .then(resData => res.status(resData.statusCode).send({
       status: resData.statusText,

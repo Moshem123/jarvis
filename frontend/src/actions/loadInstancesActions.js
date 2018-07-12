@@ -9,6 +9,7 @@ const rearrange = {
       let data = {};
       data.lifeCycle = 'spot';
       data.id = instance.id;
+      data.instanceId = instance.id;
       data.name = instance.name;
 
       if (instance.status) {
@@ -29,70 +30,57 @@ const rearrange = {
       data.type = tagType ? tagType.tagValue : '';
       const tagClient = (instance.compute.launchSpecification.tags || []).find(e => e.tagKey === "Client");
       data.client = tagClient ? tagClient.tagValue : '';
-
+      data.tags = instance.compute.launchSpecification.tags || [];
       data.zone = instance.compute.availabilityZones[0].name;
       data.timestamp = instance.timestamp;
       return data;
     });
   },
   ec2: (data) => {
-    return data.reduce((result, instanceArr) => {
-      const instances = instanceArr.Instances;
-      instances.forEach(inst => {
-        let data = {};
-        if (!inst.InstanceLifecycle) {
-          data.lifeCycle = 'ec2';
-          data.id = inst.InstanceId;
-          data.instanceId = inst.InstanceId;
-          const tagName = inst.Tags.find(e => e.Key === "Name");
-          data.name = tagName ? tagName.Value : '';
-          data.ip = inst.PrivateIpAddress;
-          data.status = inst.State.Name;
-          data.statusColor = getStatusColor(inst.State.Name);
-          const tagType = inst.Tags.find(e => e.Key === "Type");
-          data.type = tagType ? tagType.Value : '';
-          const tagClient = inst.Tags.find(e => e.Key === "Client");
-          data.client = tagClient ? tagClient.Value : '';
-          data.amazonType = inst.InstanceType;
-          data.zone = inst.Placement.AvailabilityZone;
-          data.timestamp = inst.timestamp;
-          result.push(data);
-        }
-      });
-      return result;
-    }, []);
+    return data.map(inst => {
+      let data = {};
+      data.lifeCycle = 'ec2';
+      data.id = inst.InstanceId;
+      data.instanceId = inst.InstanceId;
+      const tagName = inst.Tags.find(e => e.Key === "Name");
+      data.name = tagName ? tagName.Value : '';
+      data.ip = inst.PrivateIpAddress;
+      data.status = inst.State.Name;
+      data.statusColor = getStatusColor(inst.State.Name);
+      const tagType = inst.Tags.find(e => e.Key === "Type");
+      data.type = tagType ? tagType.Value : '';
+      const tagClient = inst.Tags.find(e => e.Key === "Client");
+      data.client = tagClient ? tagClient.Value : '';
+      data.amazonType = inst.InstanceType;
+      data.zone = inst.Placement.AvailabilityZone;
+      data.timestamp = inst.timestamp;
+      data.tags = inst.Tags || [];
+      return data;
+    });
+
   },
   fleet: (data) => {
-    return data.reduce((result, instanceArr) => {
-      const instancesObjectArray = instanceArr.instances;
-      if (instancesObjectArray.length === 1) {
-        const fullInstData = instancesObjectArray[0];
-        const instances = fullInstData.Instances;
-        instances.forEach(inst => {
-          let data = {};
-          data.lifeCycle = 'fleet';
-          data.id = instanceArr.SpotFleetRequestId;
-          data.instanceId = inst.InstanceId;
-          const tagName = inst.Tags.find(e => e.Key === "Name");
-          data.name = tagName ? tagName.Value : '';
-          data.ip = inst.PrivateIpAddress;
-          data.status = inst.State.Name;
-          data.statusColor = getStatusColor(inst.State.Name);
-          const tagType = inst.Tags.find(e => e.Key === "Type");
-          data.type = tagType ? tagType.Value : '';
-          const tagClient = inst.Tags.find(e => e.Key === "Client");
-          data.client = tagClient ? tagClient.Value : '';
-          data.amazonType = inst.InstanceType;
-          data.zone = inst.Placement.AvailabilityZone;
-          data.timestamp = inst.timestamp;
-          result.push(data);
-        });
-      }
-      // instancesObjectArray.forEach(fullInstData => {
-      //
-      // });
-      return result;
-    }, []);
+    return data.map(inst => {
+      let data = {};
+      data.lifeCycle = 'fleet';
+      const spotId = inst.Tags.find(e => e.Key === "aws:ec2spot:fleet-request-id");
+      data.id = spotId ? spotId.Value : inst.InstanceId;
+      data.instanceId = inst.InstanceId;
+      const tagName = inst.Tags.find(e => e.Key === "Name");
+      data.name = tagName ? tagName.Value : '';
+      data.ip = inst.PrivateIpAddress;
+      data.status = inst.State.Name;
+      data.statusColor = getStatusColor(inst.State.Name);
+      const tagType = inst.Tags.find(e => e.Key === "Type");
+      data.type = tagType ? tagType.Value : '';
+      const tagClient = inst.Tags.find(e => e.Key === "Client");
+      data.client = tagClient ? tagClient.Value : '';
+      data.amazonType = inst.InstanceType;
+      data.zone = inst.Placement.AvailabilityZone;
+      data.timestamp = inst.timestamp;
+      data.tags = inst.Tags || [];
+      return data;
+    });
   }
 };
 
@@ -164,12 +152,11 @@ export function loadInstance(instanceData) {
   return function (dispatch) {
     return getToken().then(authConfig => {
       const isSpot = instanceData.lifeCycle === 'spot';
-      const isFleet = instanceData.lifeCycle === 'fleet';
-      if (!isSpot && !isFleet) {
+      if (!isSpot) {
         authConfig.params = { region: instanceData.zone.slice(0, -1) }
       }
       dispatch(beginAjaxCall());
-      return axios.get(`/api/instances/${instanceData.lifeCycle}/${instanceData.id}`, authConfig)
+      return axios.get(`/api/instances/${instanceData.lifeCycle}/${instanceData.instanceId}`, authConfig)
         .then(data => {
           const newData = rearrange[instanceData.lifeCycle](data.data);
           dispatch(loadInstanceSuccess(newData));

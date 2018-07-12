@@ -147,7 +147,8 @@ function mapStateToProps(state, ownProps) {
     client: '',
     amazonType: '',
     zone: '',
-    timestamp: new Date()
+    timestamp: new Date(),
+    tags: []
   };
   if (instanceId && state.instances.instances.length > 0) {
     instance = getInstanceById(state.instances.instances, instanceId) || instance;

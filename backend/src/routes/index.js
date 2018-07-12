@@ -42,8 +42,8 @@ inst.post('/spot', instances.toggleSpotInst);
 inst.get('/ec2', instances.getAllEC2Inst);
 inst.get('/ec2/:id', instances.getSingleEC2Inst);
 inst.post('/ec2', instances.toggleEC2Inst);
-inst.get('/fleet/', instances.getAllFleet);
-inst.get('/fleet/:fleet', instances.getSingleFleet);
+inst.get('/fleet/', instances.getAllFleetInst);
+inst.get('/fleet/:id', instances.getSingleFleetInst);
 inst.post('/fleet', instances.toggleFleetInst);
 
 // get routes

@@ -108,7 +108,7 @@ const InstancesList = ({ instances, match, listType, sortFunc, alreadySorted }) 
         <SmallCircle
           color={data.statusColor}
           className={`fa fa-circle`}>&nbsp;</SmallCircle>
-        <Link to={`${match.path}/instances/${data.id}`}>
+        <Link to={`${match.path}/instances/${data.id}`} style={{color: lifecycleToColor[data.lifeCycle]}}>
           {data.name}
         </Link>
       </td>
